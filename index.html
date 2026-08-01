@@ -1,9 +1,26 @@
 <!DOCTYPE html>
+<!--
+  © 2026 العربي. جميع الحقوق محفوظة.
+  هذا العمل، بما يشمل التصميم والشيفرة والمحتوى، محمي بموجب حقوق الملكية الفكرية.
+  يُمنع نسخ هذا الموقع أو أي جزء منه أو إعادة توزيعه أو تعديله أو استخدامه
+  لأي غرض تجاري أو غير تجاري دون إذن كتابي مسبق من صاحب الحقوق.
+  All rights reserved. Unauthorized copying, redistribution, modification,
+  or commercial use of this site, in whole or in part, is prohibited
+  without prior written permission from the copyright holder.
+-->
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>العربي — ملاحظات ومقالات</title>
+<title>منصة العربي</title>
+<script>
+  try{
+    var savedTheme = localStorage.getItem('site-theme');
+    if(savedTheme){
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  }catch(e){}
+</script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
   @font-face{
@@ -24,6 +41,31 @@
     --rule: #2a2a2d;
   }
 
+  :root[data-theme="light"]{
+    --bg: #f7f4ee;
+    --bg-raised: #eee8da;
+    --ink: #201d18;
+    --ink-dim: #6d6559;
+    --ink-faint: #a39a89;
+    --accent: #a5762f;
+    --accent-dim: #c9a24a;
+    --rule: #ddd4c2;
+  }
+
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme]){
+      --bg: #f7f4ee;
+      --bg-raised: #eee8da;
+      --ink: #201d18;
+      --ink-dim: #6d6559;
+      --ink-faint: #a39a89;
+      --accent: #a5762f;
+      --accent-dim: #c9a24a;
+      --rule: #ddd4c2;
+    }
+  }
+
+
   *{margin:0;padding:0;box-sizing:border-box;}
 
   html{scroll-behavior:smooth;}
@@ -36,6 +78,7 @@
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     overflow-anchor:none;
+    transition:background .2s ease, color .2s ease;
   }
 
   ::selection{background:var(--accent); color:#0e0e10;}
@@ -51,6 +94,32 @@
   }
 
   /* ===== Header ===== */
+  #loading-screen{
+    position:fixed;
+    inset:0;
+    z-index:300;
+    background:var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:1;
+    visibility:visible;
+    transition:opacity .35s ease, visibility .35s ease;
+  }
+
+  #loading-screen.is-hidden{
+    opacity:0;
+    visibility:hidden;
+  }
+
+  #loading-screen span{
+    font-family:'CustomFont', Georgia, serif;
+    font-size:38px;
+    font-weight:600;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+
   #menu-toggle{
     position:fixed;
     top:14px;
@@ -75,6 +144,7 @@
     height:2px;
     background:var(--ink);
     transition:transform .2s ease, opacity .2s ease;
+    pointer-events:none;
   }
 
   #menu-toggle[aria-expanded="true"] span:nth-child(1){
@@ -129,21 +199,6 @@
     border-top:1px solid var(--rule);
   }
 
-  .menu-dropdown button:last-child{
-    position:relative;
-    border-bottom:1px solid var(--rule);
-    margin-bottom:8px;
-  }
-
-  .menu-dropdown button:last-child::after{
-    content:'';
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:-8px;
-    height:1px;
-    background:var(--rule);
-  }
 
   .menu-dropdown button:hover{
     color:var(--ink);
@@ -151,6 +206,41 @@
 
   .menu-dropdown button.is-active{
     color:var(--accent);
+  }
+
+  .menu-dropdown button.theme-switch{
+    position:relative;
+    display:block;
+    margin:20px auto 0;
+    width:51px;
+    height:31px;
+    padding:0;
+    background:none;
+    border:1px solid var(--rule);
+    border-radius:16px;
+    cursor:pointer;
+  }
+
+  .menu-dropdown .switch-thumb{
+    position:absolute;
+    top:3px;
+    left:3px;
+    width:23px;
+    height:23px;
+    border-radius:50%;
+    background:var(--ink);
+    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+    transition:left .25s ease;
+  }
+
+  html[data-theme="light"] .switch-thumb{
+    left:25px;
+  }
+
+  @media (prefers-color-scheme: light){
+    html:not([data-theme]) .switch-thumb{
+      left:25px;
+    }
   }
 
   header{
@@ -228,6 +318,27 @@
     cursor:pointer;
   }
 
+  .quote-section{
+    max-width:920px;
+    margin:0 auto;
+    padding:40px 28px 28px;
+    border-bottom:1px solid var(--rule);
+  }
+
+  .quote{
+    font-size:26px;
+    font-weight:700;
+    line-height:1.5;
+    color:var(--ink);
+  }
+
+  .quote-author{
+    margin-top:14px;
+    text-align:left;
+    font-size:16px;
+    color:var(--ink-dim);
+  }
+
   /* ===== Hero / Featured ===== */
   .hero{
     max-width:920px;
@@ -288,14 +399,20 @@
 
   .archive > .label{ margin-bottom:32px; display:block; }
 
+  #archive > .label, #jokes > .label{ font-size:29px; }
+
   .post{
     display:grid;
     grid-template-columns:88px 1fr auto;
     gap:24px;
     align-items:baseline;
-    padding:26px 0;
+    padding:6px 0;
     border-bottom:1px solid var(--rule);
     transition:padding-left .25s ease;
+  }
+
+  #jokes .post{
+    grid-template-columns:1fr;
   }
 
   .post:first-of-type{ border-top:1px solid var(--rule); }
@@ -309,13 +426,25 @@
   }
 
   .post .body h3{
-    font-size:29px;
+    font-size:21px;
     font-weight:500;
     margin-bottom:6px;
     transition:color .2s ease;
   }
 
   .post:hover .body h3{ color:var(--accent); }
+
+  .post-title{
+    background:none;
+    border:none;
+    padding:0;
+    text-align:right;
+    cursor:pointer;
+    font-family:inherit;
+    color:inherit;
+    display:block;
+    width:100%;
+  }
 
   .post .body p{
     color:var(--ink-dim);
@@ -329,6 +458,44 @@
     color:var(--ink-faint);
     white-space:nowrap;
     align-self:start;
+  }
+
+  .detail-page{
+    max-width:920px;
+    margin:0 auto;
+    padding:56px 28px 88px;
+  }
+
+  .back-button{
+    background:none;
+    border:none;
+    color:var(--ink-dim);
+    font-family:'CustomFont', sans-serif;
+    font-size:16px;
+    padding:0;
+    margin-bottom:32px;
+    cursor:pointer;
+    transition:color .2s ease;
+  }
+
+  .back-button:hover{ color:var(--accent); }
+
+  .detail-page h2{
+    font-size:32px;
+    font-weight:500;
+    margin-bottom:20px;
+  }
+
+  .detail-page p{
+    color:var(--ink-dim);
+    font-size:21px;
+    max-width:60ch;
+  }
+
+  .detail-page p.reference{
+    color:var(--ink-faint);
+    font-size:15px;
+    margin-top:20px;
   }
 
   .empty-archive{
@@ -526,6 +693,10 @@
 </head>
 <body>
 
+<div id="loading-screen">
+  <span>العربي</span>
+</div>
+
 <button type="button" id="menu-toggle" aria-label="فتح القائمة" aria-expanded="false">
   <span></span>
   <span></span>
@@ -535,7 +706,12 @@
 <div id="menu-dropdown" class="menu-dropdown" aria-hidden="true">
   <button type="button" data-target="featured">الرئيسية</button>
   <button type="button" data-target="archive">مقالات</button>
+  <button type="button" data-target="jokes">طرائف</button>
   <button type="button" data-target="about">عن الموقع</button>
+
+  <button type="button" id="theme-toggle" class="theme-switch" aria-label="تبديل المظهر">
+    <span class="switch-thumb"></span>
+  </button>
 </div>
 
 <header>
@@ -543,11 +719,17 @@
   <nav>
     <button type="button" data-target="featured">الرئيسية</button>
     <button type="button" data-target="archive">مقالات</button>
+    <button type="button" data-target="jokes">طرائف</button>
     <button type="button" data-target="about">عن الموقع</button>
   </nav>
 </header>
 
 <div id="page-home">
+
+<section class="quote-section">
+  <p class="quote">اكتب هنا الاقتباس الذي تريد عرضه.</p>
+  <p class="quote-author">— اسم القائل</p>
+</section>
 
 <section class="hero" id="featured">
   <span class="label">لم يُنشر شيء بعد</span>
@@ -592,6 +774,66 @@
 
 </div>
 
+<div id="page-jokes">
+
+<section class="archive" id="jokes">
+  <span class="label">طرائف</span>
+
+  <div class="post">
+    <div class="body">
+      <button type="button" class="post-title" data-detail="joke-1"><h3>جحا يبحث عن مفتاحه</h3></button>
+    </div>
+  </div>
+
+  <div class="post">
+    <div class="body">
+      <button type="button" class="post-title" data-detail="joke-2"><h3>سؤال الخليفة</h3></button>
+    </div>
+  </div>
+
+  <div class="post">
+    <div class="body">
+      <button type="button" class="post-title" data-detail="joke-3"><h3>جحا وطبق الحلوى</h3></button>
+    </div>
+  </div>
+
+  <div class="post">
+    <div class="body">
+      <button type="button" class="post-title" data-detail="joke-4"><h3>الحكيم والصامت</h3></button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div id="page-joke-1" class="detail-page">
+  <button type="button" class="back-button" data-back="jokes">← العودة إلى طرائف</button>
+  <h2>جحا يبحث عن مفتاحه</h2>
+  <p>وجدوه يبحث عن مفتاحه المفقود تحت ضوء المصباح، بعيدًا عن الباب الذي أضاعه عنده، فسألوه: "لماذا هنا؟" فأجاب: "لأن النور هنا أوضح."</p>
+  <p class="reference">المصدر: من نوادر جحا في التراث الشعبي العربي</p>
+</div>
+
+<div id="page-joke-2" class="detail-page">
+  <button type="button" class="back-button" data-back="jokes">← العودة إلى طرائف</button>
+  <h2>سؤال الخليفة</h2>
+  <p>سأل أحد الخلفاء أعرابيًا: "ما أطول يوم في حياتك؟" فقال: "اليوم الذي أنتظر فيه عطاءك يا أمير المؤمنين."</p>
+  <p class="reference">المصدر: من طرائف الأدب العربي القديم</p>
+</div>
+
+<div id="page-joke-3" class="detail-page">
+  <button type="button" class="back-button" data-back="jokes">← العودة إلى طرائف</button>
+  <h2>جحا وطبق الحلوى</h2>
+  <p>أهدى جاره طبقًا من الحلوى، فلما أعاده فارغًا، سأله الجار: "أين الطبق؟" فقال جحا: "الطبق مات من شدة الفرح بما فيه."</p>
+  <p class="reference">المصدر: من نوادر جحا في التراث الشعبي العربي</p>
+</div>
+
+<div id="page-joke-4" class="detail-page">
+  <button type="button" class="back-button" data-back="jokes">← العودة إلى طرائف</button>
+  <h2>الحكيم والصامت</h2>
+  <p>سُئل حكيم: "لماذا تصمت كثيرًا؟" فقال: "لأنني لم أندم يومًا على سكوتي، وندمت كثيرًا على كلامي."</p>
+  <p class="reference">المصدر: من الحكم والأمثال العربية المتوارثة</p>
+</div>
+
 <footer>
   <span>© 2026 العربي</span>
 </footer>
@@ -609,7 +851,9 @@
   var pageHome = document.getElementById('page-home');
   var pageEssays = document.getElementById('page-essays');
   var pageAbout = document.getElementById('page-about');
-  var allPages = [pageHome, pageEssays, pageAbout];
+  var pageJokes = document.getElementById('page-jokes');
+  var detailPages = Array.from(document.querySelectorAll('.detail-page'));
+  var allPages = [pageHome, pageEssays, pageAbout, pageJokes].concat(detailPages);
 
   function showPage(page){
     allPages.forEach(function(p){ p.style.display = (p === page) ? '' : 'none'; });
@@ -629,11 +873,37 @@
         showPage(pageAbout);
       } else if(targetId === 'archive'){
         showPage(pageEssays);
+      } else if(targetId === 'jokes'){
+        showPage(pageJokes);
       } else {
         showPage(pageHome);
       }
       setActiveNav(targetId);
       closeMenu();
+    });
+  });
+
+  // Post titles -> open their own detail page
+  document.querySelectorAll('.post-title[data-detail]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var detailPage = document.getElementById('page-' + btn.getAttribute('data-detail'));
+      if(detailPage){
+        showPage(detailPage);
+      }
+    });
+  });
+
+  // Back buttons on detail pages -> return to the list they came from
+  document.querySelectorAll('.back-button[data-back]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var backTarget = btn.getAttribute('data-back');
+      if(backTarget === 'jokes'){
+        showPage(pageJokes);
+        setActiveNav('jokes');
+      } else if(backTarget === 'archive'){
+        showPage(pageEssays);
+        setActiveNav('archive');
+      }
     });
   });
 
@@ -745,13 +1015,42 @@
     wordmarkHome.addEventListener('click', function(){
       showPage(pageHome);
       setActiveNav('featured');
+      try{ history.scrollRestoration = 'manual'; }catch(e){}
+      window.scrollTo(0, 0);
       window.location.reload();
     });
   }
 
+  // Theme toggle: sliding switch with sun/moon icons.
+  // Saved to the browser so it persists across visits.
+  var themeToggle = document.getElementById('theme-toggle');
+
+  function getCurrentTheme(){
+    return document.documentElement.getAttribute('data-theme')
+      || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  }
+
+  themeToggle.addEventListener('click', function(){
+    var next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{
+      localStorage.setItem('site-theme', next);
+    }catch(e){}
+  });
+
   // Start on the home page
   showPage(pageHome);
   setActiveNav('featured');
+
+  // Loading screen: shown on every page load/refresh, then fades out
+  var loadingScreen = document.getElementById('loading-screen');
+  if(loadingScreen){
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        loadingScreen.classList.add('is-hidden');
+      }, 500);
+    });
+  }
 </script>
 
 </body>
