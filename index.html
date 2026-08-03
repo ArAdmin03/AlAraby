@@ -16,6 +16,10 @@
     if(savedTheme){
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+    var savedTextSize = localStorage.getItem('site-text-size');
+    if(savedTextSize){
+      document.documentElement.setAttribute('data-text-size', savedTextSize);
+    }
   }catch(e){}
 </script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +40,15 @@
     --accent: #c9a24a;
     --accent-dim: #8a7238;
     --rule: #2a2a2d;
+    --text-scale: 1;
+  }
+
+  :root[data-text-size="small"]{
+    --text-scale: 0.85;
+  }
+
+  :root[data-text-size="large"]{
+    --text-scale: 1.2;
   }
 
   :root[data-theme="light"]{
@@ -71,7 +84,7 @@
     background:var(--bg);
     color:var(--ink);
     font-family:'CustomFont', Georgia, serif;
-    font-size:24px;
+    font-size:calc(24px * var(--text-scale, 1));
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     overflow-anchor:none;
@@ -84,7 +97,7 @@
 
   .label{
     font-family:'CustomFont', sans-serif;
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     letter-spacing:0.12em;
     text-transform:uppercase;
     color:var(--ink-dim);
@@ -111,7 +124,7 @@
 
   #loading-screen span{
     font-family:'CustomFont', Georgia, serif;
-    font-size:38px;
+    font-size:calc(38px * var(--text-scale, 1));
     font-weight:600;
     color:var(--ink);
     letter-spacing:-0.01em;
@@ -167,6 +180,7 @@
     justify-content:center;
     gap:8px;
     padding:28px;
+    overflow-y:auto;
     opacity:0;
     visibility:hidden;
     transition:opacity .25s ease, visibility .25s ease;
@@ -183,7 +197,7 @@
     border:none;
     color:var(--ink-dim);
     font-family:'CustomFont', serif;
-    font-size:30px;
+    font-size:calc(30px * var(--text-scale, 1));
     font-weight:600;
     padding:18px 8px;
     width:220px;
@@ -208,12 +222,13 @@
   .menu-dropdown button.theme-switch{
     position:relative;
     display:block;
+    flex-shrink:0;
     margin:20px auto 0;
-    width:51px;
-    height:31px;
+    width:51px !important;
+    height:31px !important;
     padding:0;
     background:none;
-    border:1px solid var(--rule);
+    border:1px solid var(--rule) !important;
     border-radius:16px;
     cursor:pointer;
   }
@@ -222,8 +237,8 @@
     position:absolute;
     top:3px;
     left:3px;
-    width:23px;
-    height:23px;
+    width:23px !important;
+    height:23px !important;
     border-radius:50%;
     background:var(--ink);
     box-shadow:0 1px 3px rgba(0,0,0,0.3);
@@ -238,6 +253,89 @@
     html:not([data-theme]) .switch-thumb{
       left:25px;
     }
+  }
+
+  .menu-dropdown .theme-switch,
+  .menu-dropdown .text-size-switch{
+    --text-scale: 1;
+  }
+
+  .menu-dropdown .text-size-switch{
+    position:relative;
+    display:flex;
+    flex-shrink:0;
+    margin:14px auto 0;
+    width:75px !important;
+    height:31px !important;
+    padding:0;
+    background:none;
+    border:1px solid var(--rule) !important;
+    border-radius:16px;
+  }
+
+  .menu-dropdown .text-size-switch .size-option{
+    position:relative;
+    z-index:2;
+    flex:1 0 25px;
+    width:auto;
+    height:100%;
+    margin:0;
+    padding:0;
+    border:none;
+    background:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+    font-family:'CustomFont', serif;
+    color:var(--ink-dim);
+    cursor:pointer;
+  }
+
+  .menu-dropdown .text-size-switch .size-option + .size-option{
+    border-top:none;
+  }
+
+  .menu-dropdown .text-size-switch .size-option:hover{
+    color:var(--ink);
+  }
+
+  .menu-dropdown .text-size-switch .size-option[data-size="small"]{
+    font-size:10px !important;
+  }
+
+  .menu-dropdown .text-size-switch .size-option[data-size="medium"]{
+    font-size:13px !important;
+  }
+
+  .menu-dropdown .text-size-switch .size-option[data-size="large"]{
+    font-size:16px !important;
+  }
+
+  .menu-dropdown .text-size-switch .size-thumb{
+    position:absolute;
+    z-index:1;
+    top:3px;
+    left:3px;
+    width:23px !important;
+    height:23px !important;
+    border-radius:50%;
+    background:var(--ink);
+    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+    transition:left .25s ease;
+  }
+
+  html[data-text-size="medium"] .menu-dropdown .text-size-switch .size-thumb,
+  html:not([data-text-size]) .menu-dropdown .text-size-switch .size-thumb{
+    left:26px;
+  }
+
+  html[data-text-size="small"] .menu-dropdown .text-size-switch .size-thumb{
+    left:49px;
+  }
+
+  html[data-text-size="large"] .menu-dropdown .text-size-switch .size-thumb{
+    left:3px;
   }
 
   header{
@@ -282,7 +380,7 @@
 
   header nav button{
     font-family:'CustomFont', sans-serif;
-    font-size:17px;
+    font-size:calc(17px * var(--text-scale, 1));
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--ink-dim);
@@ -303,7 +401,7 @@
 
   .wordmark{
     font-family:'CustomFont', Georgia, serif;
-    font-size:28px;
+    font-size:28px !important;
     font-weight:600;
     letter-spacing:-0.01em;
     position:relative;
@@ -323,7 +421,7 @@
   }
 
   .quote{
-    font-size:26px;
+    font-size:calc(26px * var(--text-scale, 1));
     font-weight:700;
     line-height:1.5;
     color:var(--ink);
@@ -332,7 +430,7 @@
   .quote-author{
     margin-top:14px;
     text-align:left;
-    font-size:16px;
+    font-size:calc(16px * var(--text-scale, 1));
     color:var(--ink-dim);
   }
 
@@ -347,7 +445,7 @@
   .hero .label{ margin-bottom:18px; display:block; }
 
   .hero h1{
-    font-size:clamp(44px, 6vw, 70px);
+    font-size:calc(clamp(44px, 6vw, 70px) * var(--text-scale, 1));
     font-weight:500;
     line-height:1.12;
     letter-spacing:-0.01em;
@@ -357,14 +455,14 @@
 
   .hero .dek{
     color:var(--ink-dim);
-    font-size:25px;
+    font-size:calc(25px * var(--text-scale, 1));
     max-width:52ch;
     margin-bottom:28px;
   }
 
   .hero .meta{
     font-family:'CustomFont', sans-serif;
-    font-size:17px;
+    font-size:calc(17px * var(--text-scale, 1));
     color:var(--ink-faint);
     display:flex;
     gap:16px;
@@ -379,7 +477,7 @@
     gap:8px;
     margin-top:32px;
     font-family:'CustomFont', sans-serif;
-    font-size:19px;
+    font-size:calc(19px * var(--text-scale, 1));
     color:var(--accent);
     letter-spacing:0.02em;
   }
@@ -396,7 +494,7 @@
 
   .archive > .label{ margin-bottom:32px; display:block; }
 
-  #archive > .label, #jokes > .label{ font-size:29px; }
+  #archive > .label, #jokes > .label{ font-size:calc(29px * var(--text-scale, 1)); }
 
   .post{
     display:grid;
@@ -418,12 +516,12 @@
 
   .post .num{
     font-family:'CustomFont', sans-serif;
-    font-size:17px;
+    font-size:calc(17px * var(--text-scale, 1));
     color:var(--ink-faint);
   }
 
   .post .body h3{
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     font-weight:500;
     margin-bottom:6px;
     transition:color .2s ease;
@@ -445,13 +543,13 @@
 
   .post .body p{
     color:var(--ink-dim);
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     max-width:56ch;
   }
 
   .post .when{
     font-family:'CustomFont', sans-serif;
-    font-size:17px;
+    font-size:calc(17px * var(--text-scale, 1));
     color:var(--ink-faint);
     white-space:nowrap;
     align-self:start;
@@ -468,7 +566,7 @@
     border:none;
     color:var(--ink-dim);
     font-family:'CustomFont', sans-serif;
-    font-size:16px;
+    font-size:calc(16px * var(--text-scale, 1));
     padding:0;
     margin-bottom:32px;
     cursor:pointer;
@@ -478,20 +576,20 @@
   .back-button:hover{ color:var(--accent); }
 
   .detail-page h2{
-    font-size:32px;
+    font-size:calc(32px * var(--text-scale, 1));
     font-weight:500;
     margin-bottom:20px;
   }
 
   .detail-page p{
     color:var(--ink-dim);
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     max-width:60ch;
   }
 
   .detail-page p.reference{
     color:var(--ink-faint);
-    font-size:15px;
+    font-size:calc(15px * var(--text-scale, 1));
     margin-top:20px;
   }
 
@@ -503,7 +601,7 @@
 
   .empty-archive p{
     color:var(--ink-faint);
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     font-style:italic;
   }
 
@@ -517,14 +615,14 @@
   }
 
   .about h2{
-    font-size:24px;
+    font-size:calc(24px * var(--text-scale, 1));
     font-weight:500;
     margin-bottom:14px;
   }
 
   .about p{
     color:var(--ink-dim);
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     max-width:44ch;
   }
 
@@ -550,7 +648,7 @@
 
   .signup p{
     color:var(--ink-dim);
-    font-size:20px;
+    font-size:calc(20px * var(--text-scale, 1));
     margin-bottom:20px;
   }
 
@@ -566,7 +664,7 @@
     outline:none;
     color:var(--ink);
     font-family:'CustomFont', serif;
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     flex:1;
   }
 
@@ -577,7 +675,7 @@
     border:none;
     color:var(--accent);
     font-family:'CustomFont', sans-serif;
-    font-size:17px;
+    font-size:calc(17px * var(--text-scale, 1));
     letter-spacing:0.06em;
     text-transform:uppercase;
     cursor:pointer;
@@ -586,7 +684,7 @@
   .subscribe-status{
     margin-top:12px;
     font-family:'CustomFont', sans-serif;
-    font-size:15px;
+    font-size:calc(15px * var(--text-scale, 1));
     color:var(--accent);
     min-height:1em;
   }
@@ -628,19 +726,19 @@
   .modal-mark{
     display:block;
     color:var(--accent);
-    font-size:22px;
+    font-size:calc(22px * var(--text-scale, 1));
     margin-bottom:16px;
   }
 
   .modal-box h3{
-    font-size:24px;
+    font-size:calc(24px * var(--text-scale, 1));
     font-weight:500;
     margin-bottom:10px;
   }
 
   .modal-box p{
     color:var(--ink-dim);
-    font-size:18px;
+    font-size:calc(18px * var(--text-scale, 1));
     margin-bottom:24px;
   }
 
@@ -649,7 +747,7 @@
     border:1px solid var(--accent-dim);
     color:var(--accent);
     font-family:'CustomFont', sans-serif;
-    font-size:16px;
+    font-size:calc(16px * var(--text-scale, 1));
     letter-spacing:0.04em;
     padding:10px 28px;
     cursor:pointer;
@@ -669,7 +767,7 @@
     display:flex;
     justify-content:space-between;
     font-family:'CustomFont', sans-serif;
-    font-size:21px;
+    font-size:calc(21px * var(--text-scale, 1));
     color:var(--ink-faint);
   }
 
@@ -709,6 +807,13 @@
   <button type="button" id="theme-toggle" class="theme-switch" aria-label="تبديل المظهر">
     <span class="switch-thumb"></span>
   </button>
+
+  <div id="text-size-switch" class="text-size-switch" role="group" aria-label="حجم النص">
+    <span class="size-thumb"></span>
+    <button type="button" class="size-option" data-size="small" aria-label="نص صغير">أ</button>
+    <button type="button" class="size-option" data-size="medium" aria-label="نص متوسط">أ</button>
+    <button type="button" class="size-option" data-size="large" aria-label="نص كبير">أ</button>
+  </div>
 </div>
 
 <header>
@@ -1035,6 +1140,20 @@
     try{
       localStorage.setItem('site-theme', next);
     }catch(e){}
+  });
+
+  // Text size switch: three positions (small / medium / large), each
+  // directly selectable. Saved to the browser so it persists across visits.
+  var textSizeOptions = document.querySelectorAll('#text-size-switch .size-option');
+
+  textSizeOptions.forEach(function(option){
+    option.addEventListener('click', function(){
+      var size = option.getAttribute('data-size');
+      document.documentElement.setAttribute('data-text-size', size);
+      try{
+        localStorage.setItem('site-text-size', size);
+      }catch(e){}
+    });
   });
 
   // Start on the home page
